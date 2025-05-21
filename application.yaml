@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metrics-app
+  namespace: argocd  # Must be the same namespace where Argo CD is installed
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/MdSahil-oss/cloudraft-sre-assignment.git
+    targetRevision: HEAD  # or a branch/tag/commit like 'main'
+    path: metrics-app          # path to your Helm chart directory
+    helm:
+      valueFiles:
+        - values.yaml     # optional, relative to the chart path
+      parameters:
+        - name: image.tag
+          value: "1.4"
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default     # namespace to deploy the app
+
+  syncPolicy:
+    automated:            # enables auto-syncing changes from Git
+      prune: true         # deletes resources no longer defined in Git
+      selfHeal: true      # automatically fixes out-of-sync state
+    syncOptions:
+      - CreateNamespace=true  # auto-create the destination namespace if it doesn’t exist
