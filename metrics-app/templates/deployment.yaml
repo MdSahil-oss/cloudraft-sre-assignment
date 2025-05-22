@@ -63,6 +63,9 @@ spec:
           envFrom:
           - secretRef:
               name: {{ .Values.secret.name }}
+          env:
+          - name: FLASK_DEBUG
+            value: 1
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
